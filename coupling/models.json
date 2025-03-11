@@ -1,0 +1,58 @@
+{
+    "Meta-Llama-3-70B"          : "/fs01/model-weights/Meta-Llama-3-70B",
+    "Meta-Llama-3-8B"           : "/fs01/model-weights/Meta-Llama-3-8B",
+
+    "Llama-2-70b-hf"            : "meta-llama/Llama-2-70b-hf",
+    "Llama-2-13b-hf"            : "/fs01/model-weights/Llama-2-13b-hf",
+    "Llama-2-7b-hf"             : "/fs01/model-weights/Llama-2-7b-hf",
+
+    "CodeLlama-7b-hf"           : "/fs01/model-weights/CodeLlama-7b-hf",
+    "CodeLlama-7b-Instruct-hf"  : "/fs01/model-weights/CodeLlama-7b-Instruct-hf",
+    "CodeLlama-13b-hf"          : "/fs01/model-weights/CodeLlama-13b-hf",
+    "CodeLlama-13b-Instruct-hf" : "/fs01/model-weights/CodeLlama-13b-Instruct-hf",
+    "CodeLlama-34b-hf"          : "/fs01/model-weights/CodeLlama-34b-hf",
+    "CodeLlama-34b-Instruct-hf" : "/fs01/model-weights/CodeLlama-34b-Instruct-hf",
+
+    "Orca-2-13b"                : "microsoft/Orca-2-13b",
+    "Orca-2-7b"                 : "microsoft/Orca-2-7b",
+    "phi-2"                     : "microsoft/phi-2",
+    "phi-1_5"                   : "microsoft/phi-1_5",
+    "phi-1"                     : "microsoft/phi-1",
+
+    "falcon-7b"                 : "tiiuae/falcon-7b",
+    "falcon-7b-instruct"        : "tiiuae/falcon-7b-instruct",
+    "falcon2-11b"               : "tiiuae/falcon-11B",
+    "falcon-40b"                : "tiiuae/falcon-40b",
+    "falcon-40b-instruct"       : "tiiuae/falcon-40b-instruct",
+    "vicuna-7b-v1.5"            : "lmsys/vicuna-7b-v1.5",
+
+    "mpt-7b"                    : "mosaicml/mpt-7b",
+    "mpt-30b"                   : "mosaicml/mpt-30b",
+
+    "OLMo-7B"                   : "allenai/OLMo-7B-hf",
+    "OLMo-1.7-7B"               : "allenai/OLMo-1.7-7B-hf",
+    "OLMo-1B"                   : "allenai/OLMo-1B",
+
+    "pythia-6.9b"               : "EleutherAI/pythia-6.9b",
+    "neo-2.7b"                  : "EleutherAI/gpt-neo-2.7B",
+    "neo-20b"                   : "EleutherAI/gpt-neox-20b",
+
+    "gemma-7b"                  : "/fs01/model-weights/gemma-7b",
+    "gemma-2b"                  : "/fs01/model-weights/gemma-2b",
+    "codegemma-7b"              : "google/codegemma-7b",
+    "codegemma-2b"              : "google/codegemma-2b",
+    "gemma-1.1-7b"              : "google/gemma-1.1-7b-it",
+    "gemma-1.1-2b"              : "google/gemma-1.1-2b-it",
+
+    "gpt2-xl"                   : "gpt2-xl",
+    "gpt2-large"                : "gpt2-large",
+    "gpt2-medium"               : "gpt2-medium",
+    "gpt2"                      : "gpt2",
+
+    "Mistral-7B-Instruct-v0.1"  : "/fs01/model-weights/Mistral-7B-Instruct-v0.1",
+    "Mistral-7B-Instruct-v0.2"  : "/fs01/model-weights/Mistral-7B-Instruct-v0.2",
+    "Mistral-7B-v0.1"           : "/fs01/model-weights/Mistral-7B-v0.1",
+
+    "t5-large-lm-adapt"         : "/fs01/model-weights/t5-large-lm-adapt",
+    "t5-xl-lm-adapt"            : "/fs01/model-weights/t5-xl-lm-adapt"
+}
