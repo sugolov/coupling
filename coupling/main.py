@@ -1,15 +1,11 @@
 import os
-
 import torch
 
 from align import jacobian
 from metrics import metrics
 from utils import timestamp
-"""
 
-"""
-
-def coupling_from_hooks(hooks, p=2, activation=None, verbose=False):
+def coupling_from_hooks(hooks, p=2, activation=None, chunks=4, verbose=False):
     """
     Computes the coupling of residual Jacobians across hooks.
     """
@@ -24,7 +20,7 @@ def coupling_from_hooks(hooks, p=2, activation=None, verbose=False):
 
         if activation is None:
             #last token
-            J = jacobian(x_out, x_in, -1, "cuda").detach()
+            J = jacobian(x_out, x_in, -1, "cuda", chunks).detach()
             Jacobians.append(J - torch.eye(dim))
 
             timestamp("Jacobian shape ", J.shape) if verbose else None
@@ -34,6 +30,7 @@ def coupling_from_hooks(hooks, p=2, activation=None, verbose=False):
             Jacobians.append(J - torch.eye(dim))
 
     timestamp("computing coupling metrics") if verbose else None
+
     aln_ujv_all_k, aln_vju_all_k, _, _, _, _ = metrics(Jacobians)   
 
     # TODO: aggregate all the metrics here
@@ -82,78 +79,21 @@ def run_coupling(model, x_batch, save_dir=None):
     aln_ujv_all_k, aln_vju_all_k, _, _, _, _ = alignment_metric_new(Jac_noskip)   
 
     # TODO: replace with coupling_from_hooks(hooks)
-
-
     
     out["aln_ujv_all_k"] = aln_ujv_all_k
     out["aln_vju_all_k"] = aln_vju_all_k
 
     return out
 
-
-
-#class ExperimentAlignNew:
-#
-#    def __init__(self,
-#                models,
-#                model_types,
-#                tokenizer,
-#                model_name,
-#                out_dir="out",
-#                alignment           = True,
-#                linearize           = False
-#                ):
-"""
-
-:param model:
-:param tokenizer:
-
-:param model_name:      name of model for outputs
-:param out_dir:         output directory
-
-:param lss:             True/False to include/exclude
-:param equidistance:    True/False to include/exclude
-:param norm:            True/False to include/exclude
-:param head_entropy:    True/False to include/exclude
-
-# were included:
-self.models          = models
-self.model_types     = model_types
-self.tokenizer       = tokenizer
-self.model_name      = model_name
-self.out_dir         = out_dir
-
-self.alignment       = alignment
-self.linearize       = linearize
-"""
-
-def run_coupling_hf(self, dataset, data_name, start=None, end=None, save=True):
-
-    if data_name == 'gsm8k' and end == 5:
-        skip_4 = True
-        end = 6
-    else:
-        skip_4 = False
-
-    prompts, start, end = get_prompts(dataset, data_name, start=start, end=end)
-
-    tokenizer = self.tokenizer
-    model_types = self.model_types
-    models = self.models
-
-
-    outputs = {
-        "DATA_NAME": data_name
-    }
-
+def run_coupling_hf(model, tokenizer, model_name, prompts, start=None, end=None, save=False, out_path=None):
+    
     out = {}
-
+    start = start if start is not None else 0
+    end = end if end is not None else len(prompts)
 
     for i, prompt in zip(range(start, end), prompts):
-        if skip_4 and i == 4:
-            continue
         timestamp(f"Running prompt {i + 1} of {end}")
-        out[i] = {}
+        out[i] = {"prompt": prompt}
         print(prompt)
 
         tokens = tokenizer(prompt, return_tensors='pt')
@@ -162,56 +102,38 @@ def run_coupling_hf(self, dataset, data_name, start=None, end=None, save=True):
         print(num_tokens)
         chunks = 2 * (num_tokens // 20) + 5 + i
         
-        print("Number of chunks:", chunks)# timestamp(f"Tokens loaded")
+        print("Number of chunks:", chunks)
+        
+        input_ids_cuda = input_ids.to('cuda')
+        outputs = model(input_ids, output_hidden_states=True)
+        L = len(outputs.hidden_states) - 1 # do not do last layer
+        
+        # zip to pass as hooks
+        outputs_zip = {}
+        for i in range(L):
+            outputs_zip[f"block_{i}"] = {0: outputs.hidden_states[i], 1: outputs.hidden_states[i+1]}
 
-        for idx in range(len(models)):
-            model_type = model_types[idx]
-            model = models[idx]
-            out[i][model_type] = {}
-            
+        aln_ujv_all_k, aln_vju_all_k = coupling_from_hooks(outputs_zip, activation=None, chunks=chunks)
 
-            if self.alignment:
-                input_ids_cuda = input_ids.to('cuda')
-                ujv_mat, vju_mat, uu_mat, vv_mat, uv_mat, vu_mat = compute_alignment_new(model, input_ids_cuda, chunks)
-                
-                out[i][model_type]["alignment_uu"] = uu_mat
-                out[i][model_type]["alignment_vv"] = vv_mat
-                out[i][model_type]["alignment_uv"] = uv_mat
-                out[i][model_type]["alignment_vu"] = vu_mat
-                out[i][model_type]["alignment_ujv"] = ujv_mat
-                out[i][model_type]["alignment_vju"] = vju_mat
-            # timestamp("Metric collection complete")
-            #print(self.linearize)
+        out[i]["aln_ujv_all_k"] = aln_ujv_all_k
+        out[i]["aln_vju_all_k"] = aln_vju_all_k
 
-            if self.linearize:
-                cos, t = compute_linearization(model, input_ids_cuda, chunks)
-                out[i][model_type]["cos_linearized"] = cos
-                out[i][model_type]["t"] = t
+        # ujv_mat, vju_mat, uu_mat, vv_mat, uv_mat, vu_mat = compute_alignment_new(model, input_ids_cuda, chunks)
+        
+        # out[i]["alignment_uu"] = uu_mat
+        # out[i]["alignment_vv"] = vv_mat
+        # out[i]["alignment_uv"] = uv_mat
+        # out[i]["alignment_vu"] = vu_mat
+        # out[i]["alignment_ujv"] = ujv_mat
+        # out[i]["alignment_vju"] = vju_mat
 
-            timestamp(f"Ended {model_type}")
-
-    outputs["OUT"] = out
+        timestamp(f"Ended prompt")
 
     if save:
-        out_file = self._format_out_dir(data_name, model_type, start=start, end=end)
-        torch.save(outputs, out_file)
+        if out_path is None:
+            out_path = os.getcwd()
+            print(f"Saving enabled but out_path path not specified. Saving in {out_path}")
+        out_file = os.path.join(out_path, "_".join(model_name, "coupling.pt"))
+        torch.save(out, out_file)
 
-    return outputs, out_file
-
-def _format_out_dir(self, data_name, model_type, start=None, end=None):
-    out_file = data_name + "_" + model_type + "_" + str(start) + "_" + str(end) + ".pt"
-
-    if self.alignment:
-        out_file = 'alignment_' + out_file
-
-    experiment_out_dir = os.path.join(self.out_dir, self.model_name, data_name)
-
-    if not os.path.exists(os.path.join(self.out_dir, self.model_name)):
-        os.mkdir(os.path.join(self.out_dir, self.model_name))
-
-    if not os.path.exists(experiment_out_dir):
-        os.mkdir(experiment_out_dir)
-
-    out_file = os.path.join(experiment_out_dir, out_file)
-
-    return out_file
+    return out, out_file
