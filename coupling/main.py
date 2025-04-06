@@ -7,12 +7,18 @@ from jacobian import jacobian, svd
 from metrics import metrics
 from utils import timestamp
 
-def coupling_from_hooks(hooks, p=2, activation=None, chunks=4, verbose=False, device="cuda"):
+def coupling_from_hooks(hooks, p=2, num_sing_vecs=(10,30,50), index=-1, index_in=None, 
+    activation=None, chunks=4, verbose=False, device="cuda"):
     """
     Computes the coupling of residual Jacobians across hooks.
 
     hooks:      dict of representations before and after skip connection
     - hooks[layer] = {0: x_in, 1: x_out}
+    p:              order of p-norm for coupling measurement
+    num_sing_vecs:  number of top singular vectors to use in computing coupling 
+    index:          output token index for Jacobian
+    index_in:       input token index for Jacobian   
+    - by default uses `index`
     activation: specifies whether to apply activation to `x_out` before computing Jacobian
     chunks:     number of chunks in Jacobian computation
     """
@@ -30,13 +36,13 @@ def coupling_from_hooks(hooks, p=2, activation=None, chunks=4, verbose=False, de
             Jac.append(J - torch.eye(dim).to(device))
             timestamp("Jacobian shape ", J.shape) if verbose else None
         else:
-            J = jacobian(activation(x_out), x_in, -1, "cuda").detach()
+            J = jacobian(activation(x_out), x_in, index=index, index_in=index_in, device="cuda").detach()
             Jac.append(J - torch.eye(dim).to(device))
 
     timestamp("Computing coupling metrics") if verbose else None
 
     Us, Ss, Vs = svd(Jac)
-    coupling_ujv, coupling_vju = metrics(Jac, Us, Ss, Vs, p=p)
+    coupling_ujv, coupling_vju = metrics(Jac, Us, Ss, Vs, p=p, num_sing_vecs=num_sing_vecs)
 
     return coupling_ujv, coupling_vju
 

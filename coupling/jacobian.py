@@ -13,7 +13,7 @@ def jacobian(output, input, index, chunks, index_in=None, verbose=False, device=
     by vectorizing over gradients.
 
     output:     Jacobian wrt this output
-    input:      Jacobian wrt this output
+    input:      Jacobian wrt this input
     index:      index of output token
     chunks:     number of chunks used to vectorize Jacobian computation
     index_in:   (optional) changes input token of Jacobian if not `index`
