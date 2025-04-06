@@ -20,7 +20,7 @@ pip install -e .
 
 ## Demo
 
-#### Google Colab: Colab: https://colab.research.google.com/drive/1ronRmxr0yJO8Re0iJeqp055IoiU7oLOI?usp=sharing
+#### Google Colab: https://colab.research.google.com/drive/1ronRmxr0yJO8Re0iJeqp055IoiU7oLOI?usp=sharing
 
 #### Minimal HuggingFace Demo
 
