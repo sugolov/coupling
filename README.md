@@ -19,7 +19,7 @@ pip install -e .
 ```
 
 ## Demo
-Minimal demo for use with hugging face after installing above.
+Minimal HuggingFace demo
 ```
 import os
 import torch
