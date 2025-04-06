@@ -3,9 +3,9 @@ from collections import defaultdict
 
 import torch
 
-from jacobian import jacobian, svd
-from metrics import metrics
-from utils import timestamp
+from .jacobian import jacobian, svd
+from .metrics import metrics
+from .utils import timestamp
 
 def coupling_from_hooks(hooks, p=2, num_sing_vecs=(10,30,50), index=-1, index_in=None, 
     activation=None, chunks=4, verbose=False, device="cuda"):

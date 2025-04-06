@@ -2,7 +2,7 @@ import argparse
 import os
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
-from main import run_coupling_hf
+from .main import run_coupling_hf
 
 def run(model_path="meta-llama/Meta-Llama-3-8B"):
     model_name = os.path.normpath(os.path.basename(model_path))

@@ -1,6 +1,6 @@
 import torch
 
-from jacobian import svd
+from .jacobian import svd
 
 def metrics(Jac, Us=None, Ss=None, Vs=None, p=2, num_sing_vecs=(10,30,50), 
     svd_method="torch", L=20, E=5, ITS=20, device="cpu", verbose=False):

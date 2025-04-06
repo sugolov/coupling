@@ -5,7 +5,7 @@ import torch
 from torch.autograd import grad
 from functorch.experimental import chunk_vmap
 
-from utils import timestamp
+from .utils import timestamp
 
 def jacobian(output, input, index, chunks, index_in=None, verbose=False, device="cuda"):
     """
