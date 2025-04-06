@@ -1,5 +1,12 @@
+import numpy as np
+from torch.autograd import grad
+
 import torch
 import matplotlib.pyplot as plt
+
+import time
+import gc
+from functorch.experimental import chunk_vmap
 
 def plotsvals(J, h, fh, title=None, device='cuda', SVD=SVD, label='0'):
     import matplotlib.colors as mcolors
