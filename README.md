@@ -19,15 +19,38 @@ pip install -e .
 ```
 
 ## Demo
+Minimal demo for use with hugging face after installing above.
+```
+import os
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+
+from coupling import coupling_from_hooks, run_coupling_hf
+
+model_path = "meta-llama/Meta-Llama-3-8B"
+model_name = os.path.normpath(os.path.basename(model_path))
+bnb_config = BitsAndBytesConfig(load_in_4bit=True)
+
+model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            device_map="cuda",
+            trust_remote_code=True,
+            quantization_config=bnb_config
+        )
+
+tokenizer = AutoTokenizer.from_pretrained(
+        model_path,
+        use_fast=True,
+    )
+
+prompts = ["What is the capital of France? The capital is"]
+
+out = run_coupling_hf(model, tokenizer, model_name, prompts, save=True, verbose=True)
+```
 
 #### Google Colab: https://colab.research.google.com/drive/1ronRmxr0yJO8Re0iJeqp055IoiU7oLOI?usp=sharing
 
-#### Minimal HuggingFace Demo
-
-```
-cd coupling/demo
-python minimal_demo_hf.py --model-path meta-llama/Meta-Llama-3-8B
-```
+#### Minimal HuggingFace Demo: `python coupling/demo/minimal_demo_hf.py`
 
 ## Description
 
