@@ -2,6 +2,12 @@
 ### ([Project page](https://sugolov.github.io/coupling/)) ([arXiv](https://arxiv.org/abs/2407.07810)) ([ICLR 2025](https://iclr.cc/virtual/2025/poster/28555))
 Code release for *Transformer Block Coupling and its Correlation with Generalization in LLMs* in ICLR2025.
 
+#### Contributors
+- [Murdock Aubry](https://murdockaubry.com/)
+- [Haoming Meng](https://www.linkedin.com/in/haoming-meng-264870180/)
+- [Anton Sugolov](https://sugolov.github.io)
+- [Vardan Papyan](https://sites.google.com/view/vardan-papyan/home)
+
 ![alt text](.readme/image.png)
 
 ## Setup
