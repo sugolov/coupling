@@ -1,5 +1,19 @@
 import torch
 
+def svd(J):
+    Us, Ss, Vs = [], [], []
+    for j in range(len(J)):
+        # i = len(J) - j - 1
+        i = j
+        tt = time.time()
+        print('svding layer {}'.format(i))
+        U, S, V = torch.linalg.svd(J[i])
+        Us.append(U)
+        Ss.append(S)
+        Vs.append(V)
+        print(time.time() - tt)
+    return Us, Ss, Vs
+
 def metrics(Jac, num_sing_vecs=(10,30,50)):
     #K = 30
     #K = 40
